@@ -1,4 +1,5 @@
-MarkLogic Server 4.2 introduces Information Studio, which provides a framework for creating custom plugins. Plugins let you collect and transform content and then save it to your database. 
+MarkLogic Server 4.2 introduces Information Studio, which provides a framework for creating custom plugins. 
+Plugins let you collect and transform content and then save it to your database. 
 
 This project is intended as a place where we can share plugins for collecting and transforming content in Information Studio.
 
