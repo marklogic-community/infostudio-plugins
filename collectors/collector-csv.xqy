@@ -84,7 +84,7 @@ as xs:string*
         then
           try {
                let $csv-name := fn:concat(fn:substring-before($source-location,".csv"),".xml")
-               let $lines :=  fn:tokenize($document,"\n") 
+               let $lines :=  fn:tokenize($document,"[\n\r]+") 
                let $line := $lines[1]
                let $header-elements := if($use-headers) then 
                                          let $headers := fn:tokenize($line, $delimiter)
