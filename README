@@ -1,0 +1,12 @@
+MarkLogic Server 4.2 introduces Information Studio, which provides a framework for creating custom plugins. 
+Plugins let you collect and transform content and then save it to your database. 
+
+This project is intended as a place where we can share plugins for collecting and transforming content in Information Studio.
+
+/collectors:
+collector-csv.xqy : ingests and XML-izes a directory of .csv files
+collector-feed.xqy : ingests an atom feed
+collector-twitter.xqy : ingests tweets from the public timeline
+collector-zip.xqy : ingests a directory of .zip files, unzipping them and saving the contents to the database
+
+/transformers:
