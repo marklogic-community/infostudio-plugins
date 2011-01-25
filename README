@@ -6,6 +6,7 @@ This project is intended as a place where we can share plugins for collecting an
 /collectors:
 collector-csv.xqy : ingests and XML-izes a directory of .csv files
 collector-feed.xqy : ingests an atom feed
+collector-rss.xqy : ingests an rss feed
 collector-twitter.xqy : ingests tweets from the public timeline
 collector-zip.xqy : ingests a directory of .zip files, unzipping them and saving the contents to the database
 
