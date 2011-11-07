@@ -245,7 +245,6 @@ as xs:string?
 
 };
 
-
 (:~ ----------------Main, for registration---------------- :)
 
 plugin:register(csvscan:capabilities(),"collector-csv.xqy")
