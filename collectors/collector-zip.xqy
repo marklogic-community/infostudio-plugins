@@ -183,7 +183,6 @@ as xs:string?
 
 };
 
-
 (:~ ----------------Main, for registration---------------- :)
 
 plugin:register(zipscan:capabilities(),"collector-zip.xqy")
