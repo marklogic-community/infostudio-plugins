@@ -142,7 +142,6 @@ as xs:string?
     return $labels/lbl:label[@key eq $key]/lbl:value[@xml:lang eq $lang]/string()
 };
 
-
 (:~ ----------------Main, for registration---------------- :)
 
 plugin:register(tweet:capabilities(),"collector-twitter.xqy")
