@@ -204,7 +204,6 @@ as xs:string?
 
 };
 
-
 (:~ ----------------Main, for registration---------------- :)
 
 plugin:register(feed:capabilities(),"collector-feed.xqy")
