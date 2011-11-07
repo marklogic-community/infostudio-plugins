@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2002-2010 Mark Logic Corporation.  All Rights Reserved. :)
+(: Copyright 2002-2011 Mark Logic Corporation.  All Rights Reserved. :)
 
 declare namespace zipscan = "http://marklogic.com/extension/plugin/zipscan";
 
@@ -61,14 +61,14 @@ as empty-sequence()
 };
 
 declare function zipscan:process-file(
-    $document as node(),
+    $document as node()?,
     $source-location as xs:string,
     $ticket-id as xs:string,
     $policy-deltas as element(info:options)?,
     $context as item()?)
 as xs:string*
 {
-
+    let $document := infodev:get-file($source-location,$ticket-id,$policy-deltas)
     let $mimetype := xdmp:uri-content-type($source-location)
     let $log-mimetype :=xdmp:log(fn:concat("MIMETYPE:",$mimetype))
 

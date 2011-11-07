@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2002-2010 Mark Logic Corporation.  All Rights Reserved. :)
+(: Copyright 2002-2011 Mark Logic Corporation.  All Rights Reserved. :)
 
 declare namespace csvscan = "http://marklogic.com/extension/plugin/csvscan";
 
@@ -63,13 +63,14 @@ as empty-sequence()
 };
 
 declare function csvscan:process-file(
-    $document as node(),
+    $document as node()?,
     $source-location as xs:string,
     $ticket-id as xs:string,
     $policy-deltas as element(info:options)?,
     $context as item()?)
 as xs:string*
 {
+    let $document := infodev:get-file($source-location,$ticket-id,$policy-deltas)
     let $mimetype := xdmp:uri-content-type($source-location)
 
     let $use-headers := if($context/plugin:data/headers/string() eq "true") then

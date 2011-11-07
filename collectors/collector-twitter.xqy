@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright 2002-2010 Mark Logic Corporation.  All Rights Reserved. :)
+(: Copyright 2002-2011 Mark Logic Corporation.  All Rights Reserved. :)
 
 declare namespace tweet = "http://marklogic.com/extension/plugin/twitter";
 
@@ -93,7 +93,7 @@ as empty-sequence()
 };
 
 declare function tweet:process-file(
-    $document as node(),
+    $document as node()?,
     $source-location as xs:string,
     $ticket-id as xs:string,
     $policy-deltas as element(info:options)?,
