@@ -45,6 +45,7 @@ as element(plugin:plugin-model)
         <dir>Enter directory here</dir>
         <delimiter>,</delimiter>
         <headers>true</headers>
+		<splitbyrow>true</splitbyrow>
       </plugin:data>
     </plugin:plugin-model>
 };
@@ -80,6 +81,11 @@ as xs:string*
 
     let $delimiter := $context/plugin:data/delimiter/string()
 
+	let $splitbyrow := if($context/plugin:data/splitbyrow/string() eq "true") then
+                             fn:true()
+                        else
+                             fn:false()
+							 
     let $result := 
         if(fn:ends-with($mimetype,"/csv"))
         then
@@ -102,21 +108,30 @@ as xs:string*
                let $csv:=  <csv>{
                                 if(fn:empty($header-elements)) then
                                     for $line in $lines[1 to fn:count($lines)-1]
+									let $line := csvscan:remove-quoted-commas($line)
                                     return <row>{
                                                  let $l := fn:tokenize($line,$delimiter)
                                                  return for $ln at $idx in $l
-                                                        return element {fn:concat("column",$idx)} {$ln}
+													   let $ln := csvscan:put-back-quoted-commas($ln)
+                                                       return element {fn:concat("column",$idx)} {$ln}
                                           }</row>
                                 else
                                     for $l in $lines[2 to fn:count($lines)-1]
+ 									let $l := csvscan:remove-quoted-commas($l)
                                     let $line-vals := fn:tokenize($l, $delimiter)
                                     return <row>{
                                                  for $lv at $d in $line-vals
+												 let $lv := csvscan:put-back-quoted-commas($lv)
                                                  return element {fn:name($header-elements[$d])} {$lv}
                                           }</row>
                           }</csv>
                
-               return infodev:ingest($csv, $csv-name,$ticket-id,$policy-deltas)
+               return if ($splitbyrow) then
+						for $row at $d in $csv/row
+						let $row-name := fn:concat($csv-name, $d)
+						return infodev:ingest($row, $row-name, $ticket-id, $policy-deltas)
+					  else
+						infodev:ingest($csv, $csv-name, $ticket-id, $policy-deltas)
 
           } catch($e) {
                 (infodev:handle-error($ticket-id, $source-location, $e), xdmp:log(fn:concat("ERROR",$e)))
@@ -141,6 +156,7 @@ as element(plugin:config-view)
     let $sel := attribute selected { "selected" }
     let $delimiter := $model/plugin:data/delimiter
     let $headers := $model/plugin:data/headers
+	let $splitbyrow := $model/plugin:data/splitbyrow
 
     let $delimiter-options :=
                   <options>
@@ -154,7 +170,13 @@ as element(plugin:config-view)
                     <option value="false">false</option>
                    </options>
 
-    return
+    let $split-options :=
+                  <options>
+                    <option value="true">true</option>
+                    <option value="false">false</option>
+                   </options>
+
+				   return
      <config-view xmlns="http://marklogic.com/extension/plugin">
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
@@ -181,6 +203,13 @@ as element(plugin:config-view)
                    </select>
                   <p style="color: rgb(125,125,125); font-style: italic;">
                     Choose True to use the first row of the .csv as element values. 
+                  </p>
+                  <label for="splitbyrow">{ csvscan:string("split-label", $model, $lang) }</label>
+                   <select name="splitbyrow" id="splitbyrow">
+                      { for $d in $split-options/* return <option value="{$d/@value}">{if ($d/@value eq $splitbyrow) then $sel else () }{$d/string()}</option> }
+                   </select>
+                  <p style="color: rgb(125,125,125); font-style: italic;">
+                    Choose True to insert a document by row (False for a document per csv file). 
                   </p>
 
                   <div style="position: absolute; bottom: 2px; right: 0px;">
@@ -223,7 +252,8 @@ as xs:string?
                 then concat("Load the contents of csv files from this directory on the server: ", 
                               $model/plugin:data/dir/string(), "&lt;br/&gt;",
                             "Using delimiter: ",$model/plugin:data/delimiter/string(),"&lt;br/&gt;",
-                            "Use first row of .csv as element names: ",$model/plugin:data/headers/string()
+                            "Use first row of .csv as element names: ",$model/plugin:data/headers/string(),"&lt;br/&gt;",
+							"Create a document per row: ",$model/plugin:data/splitbyrow/string()
                            )
                 else "Load the contents of csv files from a directory on the server"
              }</lbl:value>
@@ -240,9 +270,24 @@ as xs:string?
         <lbl:label key="header-label">
             <lbl:value xml:lang="en">Use First Row as Column Names</lbl:value>
         </lbl:label>
+        <lbl:label key="split-label">
+            <lbl:value xml:lang="en">Create a Document per Row</lbl:value>
+        </lbl:label>
     </lbl:labels>
     return $labels/lbl:label[@key eq $key]/lbl:value[@xml:lang eq $lang]/string()
 
+};
+
+declare function csvscan:remove-quoted-commas($row as xs:string) as xs:string
+{
+	if (fn:matches($row, "(.*)("")([^""]+),([^""]+)("")(.*)"))
+	then csvscan:remove-quoted-commas(fn:replace($row, "(.*)("")([^""]+),([^""]+)("")(.*)","$1$2$3||$4$5$6"))
+	else $row
+};
+
+declare function csvscan:put-back-quoted-commas($value as xs:string) as xs:string
+{
+	fn:replace($value, "\|\|",",")
 };
 
 (:~ ----------------Main, for registration---------------- :)

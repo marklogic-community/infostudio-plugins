@@ -9,7 +9,7 @@ Plugins let you collect and transform content and then save it to your database.
 This project is intended as a place where we can share plugins for collecting and transforming content in Information Studio.
 
 /collectors:
-collector-csv.xqy : ingests and XML-izes a directory of .csv files
+collector-csv.xqy : ingests and XML-izes a directory of .csv files. Can create a document per file or a document per row.
 collector-feed.xqy : ingests an atom feed
 collector-rss.xqy : ingests an rss feed
 collector-twitter.xqy : ingests tweets from the public timeline
