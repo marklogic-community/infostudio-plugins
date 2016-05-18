@@ -4,10 +4,11 @@ collector-csv.xqy
 This collector uses infodev:filesystem-walk to process all the files in a directory.
 In the callback function, the files are treated as csv, so its assumed that all files being processed are csv files.
 
-You have the option of selecting ',' or '|' as your delimiter.  Feel free to add others as you see fit.
+You have the option of selecting ',' or '|' as your delimiter.  Feel free to add others as you see fit. If you use comma as your delimiter, the collector will preserve commas in quoted string values (which would otherwise cause an error)
 
 Also, if you choose to have the first row be used as element values, any whitespace in the value will be replaced with underscore ('_') and validation is performed to insure the element names are valid.  
 
+You can choose to ingest each CSV file as a document, or each row as a document
 
 collector-zip.xqy
 ===============================================
